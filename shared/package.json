@@ -1,0 +1,12 @@
+{
+  "name": "shared",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Object shapes/types shared between server/ and extension/.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "lint": "biome check .",
+    "test": "mocha"
+  }
+}

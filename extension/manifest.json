@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Hunter",
+  "version": "0.1.0",
+  "description": "Turns the open job listing page into a tailored, one-page resume.",
+  "background": {
+    "service_worker": "dist/background.js",
+    "type": "module"
+  }
+}

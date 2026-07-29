@@ -1,0 +1,14 @@
+{
+  "name": "extension",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Chrome (Manifest V3) extension that scrapes the active job listing page and talks to the local server.",
+  "scripts": {
+    "build": "tsc -b",
+    "lint": "biome check .",
+    "test": "mocha"
+  },
+  "dependencies": {
+    "shared": "*"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Node/TypeScript/Express local helper server.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "lint": "biome check .",
+    "test": "mocha"
+  },
+  "dependencies": {
+    "express": "5.2.1",
+    "shared": "*"
+  },
+  "devDependencies": {
+    "@types/express": "5.0.6"
+  }
+}
