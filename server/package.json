@@ -7,7 +7,8 @@
   "scripts": {
     "build": "tsc -b",
     "lint": "biome check .",
-    "test": "mocha"
+    "test": "mocha",
+    "smoke:ollama": "tsx scripts/ollama-smoke-test.ts"
   },
   "dependencies": {
     "express": "5.2.1",
