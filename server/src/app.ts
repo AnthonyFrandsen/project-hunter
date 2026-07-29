@@ -1,17 +1,12 @@
 import express from "express";
+import type { Config } from "./config";
 
-/**
- * Hardcoded per ticket 0.2 — ticket 0.3 owns replacing this with the config-driven
- * Ollama endpoint env var once its config loader lands.
- */
-const OLLAMA_URL = "http://host.docker.internal:11434";
-
-export function createApp() {
+export function createApp(config: Pick<Config, "ollamaEndpoint">) {
   const app = express();
 
   app.get("/health", async (_req, res) => {
     try {
-      const response = await fetch(OLLAMA_URL, { signal: AbortSignal.timeout(2000) });
+      const response = await fetch(config.ollamaEndpoint, { signal: AbortSignal.timeout(2000) });
       res.json({ ok: true, ollamaReachable: response.ok, ollamaStatus: response.status });
     } catch (error) {
       res.json({
