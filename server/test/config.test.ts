@@ -4,7 +4,13 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { ConfigError, loadConfig } from "../src/config";
 
-const ENV_KEYS = ["HUNTER_RESUME_PATH", "HUNTER_OUTPUT_DIR", "HUNTER_OLLAMA_ENDPOINT"] as const;
+const ENV_KEYS = [
+  "HUNTER_RESUME_PATH",
+  "HUNTER_OUTPUT_DIR",
+  "HUNTER_OLLAMA_ENDPOINT",
+  "HUNTER_MOCK_OLLAMA",
+  "HUNTER_MOCK_OLLAMA_DELAY_MS",
+] as const;
 
 describe("config", () => {
   let tmpDir: string;
@@ -137,6 +143,45 @@ describe("config", () => {
     process.env.HUNTER_OUTPUT_DIR = outputDir;
     process.env.HUNTER_OLLAMA_ENDPOINT = "not a url";
 
+    assert.throws(() => loadConfig(), ConfigError);
+  });
+
+  it("defaults mockOllama to false and mockOllamaDelayMs to 0 when unset", () => {
+    setValidEnv();
+
+    const config = loadConfig();
+
+    assert.strictEqual(config.mockOllama, false);
+    assert.strictEqual(config.mockOllamaDelayMs, 0);
+  });
+
+  it("enables mockOllama when HUNTER_MOCK_OLLAMA is 'true' or '1'", () => {
+    setValidEnv();
+
+    process.env.HUNTER_MOCK_OLLAMA = "true";
+    assert.strictEqual(loadConfig().mockOllama, true);
+
+    process.env.HUNTER_MOCK_OLLAMA = "1";
+    assert.strictEqual(loadConfig().mockOllama, true);
+
+    process.env.HUNTER_MOCK_OLLAMA = "nope";
+    assert.strictEqual(loadConfig().mockOllama, false);
+  });
+
+  it("parses a valid HUNTER_MOCK_OLLAMA_DELAY_MS", () => {
+    setValidEnv();
+    process.env.HUNTER_MOCK_OLLAMA_DELAY_MS = "250";
+
+    assert.strictEqual(loadConfig().mockOllamaDelayMs, 250);
+  });
+
+  it("throws on a non-integer or negative HUNTER_MOCK_OLLAMA_DELAY_MS", () => {
+    setValidEnv();
+
+    process.env.HUNTER_MOCK_OLLAMA_DELAY_MS = "-5";
+    assert.throws(() => loadConfig(), ConfigError);
+
+    process.env.HUNTER_MOCK_OLLAMA_DELAY_MS = "not-a-number";
     assert.throws(() => loadConfig(), ConfigError);
   });
 });

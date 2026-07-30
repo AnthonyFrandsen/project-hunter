@@ -54,6 +54,22 @@ Detailed per-package instructions (loading the unpacked extension in Chrome, sta
 locally, etc.) will be added once those workflows solidify in later phases; see `docs/roadmap.md`
 Phase 11 for the eventual setup doc.
 
+### Dev-only: stubbed Claude Code CLI mode
+
+`server/src/claude-cli.ts` / `server/src/claude-cli-stub.ts` implement a **development-only
+scaffold** (`docs/tickets/phase-0/0.5-stubbed-ollama-dev-mode.md`) that fakes the entire Claude
+Code CLI invocation — including the `.md`/`.docx` file writes a real run would produce — so the
+pipeline logic being built in Phases 1–3 (queueing, progress reporting, file I/O) can be developed
+and tested without the real Claude Code CLI + Ollama stack. It is **not** a user-facing feature and
+must never be enabled for a real run. Set these env vars to opt in:
+
+- `HUNTER_MOCK_OLLAMA=true` — use the stub instead of the real CLI invocation (default: off; when
+  off, invoking the client throws, since the real Phase 4 integration doesn't exist yet).
+- `HUNTER_MOCK_OLLAMA_DELAY_MS=<ms>` — artificial delay before the stub responds, to exercise
+  multi-step progress/queue-depth UI states (default: `0`).
+
+The server logs a warning at startup whenever `HUNTER_MOCK_OLLAMA` is enabled.
+
 The Node version this repo is built against is pinned in `.nvmrc` (and mirrored in the root
 `package.json` `engines` field) for reproducibility across contributors' machines.
 
