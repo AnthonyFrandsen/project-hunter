@@ -1,21 +1,22 @@
-import express from "express";
+import express, { type Express } from "express";
 import type { Config } from "./config";
+import { errorHandler } from "./middleware/error-handler";
+import { createRouter } from "./routes";
 
-export function createApp(config: Pick<Config, "ollamaEndpoint">) {
+export function attachCoreMiddleware(app: Express, config: Pick<Config, "ollamaEndpoint">): void {
+  app.use(express.json());
+  app.use(createRouter(config));
+}
+
+export function attachErrorHandler(app: Express): void {
+  app.use(errorHandler);
+}
+
+export function createApp(config: Pick<Config, "ollamaEndpoint">): Express {
   const app = express();
 
-  app.get("/health", async (_req, res) => {
-    try {
-      const response = await fetch(config.ollamaEndpoint, { signal: AbortSignal.timeout(2000) });
-      res.json({ ok: true, ollamaReachable: response.ok, ollamaStatus: response.status });
-    } catch (error) {
-      res.json({
-        ok: true,
-        ollamaReachable: false,
-        error: error instanceof Error ? error.message : String(error),
-      });
-    }
-  });
+  attachCoreMiddleware(app, config);
+  attachErrorHandler(app);
 
   return app;
 }
