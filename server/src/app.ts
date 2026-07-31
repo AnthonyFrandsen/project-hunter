@@ -5,7 +5,7 @@ import { createRouter } from "./routes";
 
 export function attachCoreMiddleware(
   app: Express,
-  config: Pick<Config, "ollamaEndpoint" | "sharedSecret">,
+  config: Pick<Config, "ollamaEndpoint" | "sharedSecret" | "mockOllamaDelayMs">,
 ): void {
   app.use(express.json());
   app.use(createRouter(config));
@@ -15,7 +15,9 @@ export function attachErrorHandler(app: Express): void {
   app.use(errorHandler);
 }
 
-export function createApp(config: Pick<Config, "ollamaEndpoint" | "sharedSecret">): Express {
+export function createApp(
+  config: Pick<Config, "ollamaEndpoint" | "sharedSecret" | "mockOllamaDelayMs">,
+): Express {
   const app = express();
 
   attachCoreMiddleware(app, config);

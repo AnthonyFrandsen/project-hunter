@@ -6,6 +6,7 @@ describe("server", () => {
     const server = createApp({
       ollamaEndpoint: "http://host.docker.internal:11434",
       sharedSecret: "test-secret",
+      mockOllamaDelayMs: 0,
     }).listen(0);
     const address = server.address();
     if (address === null || typeof address === "string") {

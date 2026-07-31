@@ -3,7 +3,11 @@ import express from "express";
 import { attachCoreMiddleware, attachErrorHandler } from "../src/app";
 import { SHARED_SECRET_HEADER } from "../src/middleware/require-shared-secret";
 
-const config = { ollamaEndpoint: "http://host.docker.internal:11434", sharedSecret: "test-secret" };
+const config = {
+  ollamaEndpoint: "http://host.docker.internal:11434",
+  sharedSecret: "test-secret",
+  mockOllamaDelayMs: 0,
+};
 const authHeaders = { [SHARED_SECRET_HEADER]: config.sharedSecret };
 
 async function withServer(
