@@ -1,8 +1,10 @@
 import assert from "node:assert";
 import express from "express";
 import { attachCoreMiddleware, attachErrorHandler } from "../src/app";
+import { SHARED_SECRET_HEADER } from "../src/middleware/require-shared-secret";
 
-const config = { ollamaEndpoint: "http://host.docker.internal:11434" };
+const config = { ollamaEndpoint: "http://host.docker.internal:11434", sharedSecret: "test-secret" };
+const authHeaders = { [SHARED_SECRET_HEADER]: config.sharedSecret };
 
 async function withServer(
   app: express.Express,
@@ -32,7 +34,7 @@ describe("app middleware", () => {
     await withServer(app, async (baseUrl) => {
       const response = await fetch(`${baseUrl}/__test-echo`, {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": "application/json", ...authHeaders },
         body: JSON.stringify({ hello: "world" }),
       });
       const body = await response.json();
@@ -51,7 +53,7 @@ describe("app middleware", () => {
     attachErrorHandler(app);
 
     await withServer(app, async (baseUrl) => {
-      const response = await fetch(`${baseUrl}/__test-throw`);
+      const response = await fetch(`${baseUrl}/__test-throw`, { headers: authHeaders });
       const body = await response.json();
 
       assert.strictEqual(response.status, 500);
@@ -68,7 +70,7 @@ describe("app middleware", () => {
     attachErrorHandler(app);
 
     await withServer(app, async (baseUrl) => {
-      const response = await fetch(`${baseUrl}/__test-reject`);
+      const response = await fetch(`${baseUrl}/__test-reject`, { headers: authHeaders });
       const body = await response.json();
 
       assert.strictEqual(response.status, 500);

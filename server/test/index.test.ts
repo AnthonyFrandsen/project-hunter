@@ -3,7 +3,10 @@ import { createApp } from "../src/app";
 
 describe("server", () => {
   it("GET /health reports whether the native Ollama instance is reachable", async () => {
-    const server = createApp({ ollamaEndpoint: "http://host.docker.internal:11434" }).listen(0);
+    const server = createApp({
+      ollamaEndpoint: "http://host.docker.internal:11434",
+      sharedSecret: "test-secret",
+    }).listen(0);
     const address = server.address();
     if (address === null || typeof address === "string") {
       throw new Error("expected an AddressInfo from an ephemeral-port listener");
